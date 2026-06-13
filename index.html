@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShopEase — A modern, full-stack e-commerce platform built with React, Node.js, Express, and MongoDB. Fast, secure, and beautifully responsive.">
+    <meta name="keywords" content="ShopEase, e-commerce, React, Node.js, MongoDB, online store, shopping platform">
+    <meta name="author" content="Fred Otieno">
+    <meta property="og:title" content="ShopEase — Modern E-Commerce Made Simple">
+    <meta property="og:description" content="A full-stack e-commerce platform featuring smart product filtering, real-time cart, secure checkout, and blazing-fast performance.">
+    <meta property="og:type" content="website">
+    <title>ShopEase — Modern E-Commerce Made Simple</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ===== CSS Custom Properties ===== */
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #0f0f1a;
+            --bg-tertiary: #161625;
+            --bg-card: rgba(22, 22, 37, 0.6);
+            --bg-glass: rgba(124, 58, 237, 0.06);
+            --border-glass: rgba(124, 58, 237, 0.15);
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
+            --accent-glow: rgba(124, 58, 237, 0.35);
+            --accent-subtle: rgba(167, 139, 250, 0.1);
+            --text-primary: #f1f0f5;
+            --text-secondary: #9d9bb0;
+            --text-muted: #6b6980;
+            --gradient-accent: linear-gradient(135deg, #7c3aed 0%, #a78bfa 50%, #c4b5fd 100%);
+            --gradient-bg: linear-gradient(180deg, #0a0a0f 0%, #0f0f1a 50%, #0a0a0f 100%);
+            --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.15);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+
+        /* ===== Utility ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-light);
+            background: var(--accent-subtle);
+            border: 1px solid var(--border-glass);
+            padding: 6px 16px;
+            border-radius: 100px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 580px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+        }
+
+        .text-gradient {
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== Scroll Reveal Animations ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+
+        /* ===== Navbar ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: background var(--transition), box-shadow var(--transition), padding var(--transition);
+        }
+        .navbar.scrolled {
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 var(--border-glass);
+            padding: 10px 0;
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+        .nav-logo i {
+            color: var(--accent);
+            font-size: 1.3rem;
+        }
+        .nav-logo span { color: var(--accent-light); }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color var(--transition);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width var(--transition);
+            border-radius: 2px;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .nav-cta:hover {
+            background: #6d28d9;
+            box-shadow: 0 0 24px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile menu */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            overflow: hidden;
+        }
+
+        /* Animated gradient background */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 60%);
+            animation: floatOrb 12s ease-in-out infinite;
+        }
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.08) 0%, transparent 60%);
+            animation: floatOrb 15s ease-in-out infinite reverse;
+        }
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
+        /* Grid pattern overlay */
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 30%, transparent 100%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--accent-subtle);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .hero-badge i { font-size: 0.7rem; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+            font-size: clamp(2.8rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+
+        .hero-tagline {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: var(--font);
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        .btn-primary:hover::before { transform: translateX(100%); }
+        .btn-primary:hover {
+            background: #6d28d9;
+            box-shadow: 0 0 40px var(--accent-glow), 0 8px 24px rgba(124, 58, 237, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: var(--font);
+            color: var(--text-primary);
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--accent-subtle);
+            color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        /* Floating stats under hero */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+        .hero-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ===== Features Section ===== */
+        .features {
+            padding: 100px 0;
+            position: relative;
+        }
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(to bottom, transparent, var(--border-glass), transparent);
+        }
+        .features-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 36px 28px;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .feature-card:hover {
+            border-color: rgba(124, 58, 237, 0.3);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-glow);
+        }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-subtle);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            font-size: 1.2rem;
+            color: var(--accent-light);
+            margin-bottom: 20px;
+            transition: all var(--transition);
+        }
+        .feature-card:hover .feature-icon {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 24px var(--accent-glow);
+        }
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .feature-card p {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== Tech Stack Section ===== */
+        .tech-stack {
+            padding: 100px 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .tech-stack::before,
+        .tech-stack::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-glass), transparent);
+        }
+        .tech-stack::before { top: 0; }
+        .tech-stack::after { bottom: 0; }
+
+        .tech-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .tech-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .tech-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 28px 32px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition);
+            min-width: 140px;
+            cursor: default;
+        }
+        .tech-item:hover {
+            transform: translateY(-8px);
+            border-color: rgba(124, 58, 237, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+        .tech-item-icon {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            font-size: 1.6rem;
+            transition: all var(--transition);
+        }
+        .tech-item:hover .tech-item-icon {
+            transform: scale(1.15);
+        }
+        .tech-react .tech-item-icon { color: #61dafb; background: rgba(97, 218, 251, 0.1); }
+        .tech-node .tech-item-icon { color: #68a063; background: rgba(104, 160, 99, 0.1); }
+        .tech-express .tech-item-icon { color: #f5f5f5; background: rgba(245, 245, 245, 0.06); }
+        .tech-mongo .tech-item-icon { color: #47a248; background: rgba(71, 162, 72, 0.1); }
+        .tech-js .tech-item-icon { color: #f7df1e; background: rgba(247, 223, 30, 0.1); }
+
+        .tech-item span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ===== Screenshots / Mockup Section ===== */
+        .mockup-section {
+            padding: 100px 0;
+            position: relative;
+        }
+        .mockup-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        /* Browser window chrome */
+        .browser-window {
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+            background: var(--bg-tertiary);
+        }
+        .browser-topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: rgba(22, 22, 37, 0.9);
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .browser-dots {
+            display: flex;
+            gap: 7px;
+        }
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .browser-dot:nth-child(1) { background: #ff5f57; }
+        .browser-dot:nth-child(2) { background: #ffbd2e; }
+        .browser-dot:nth-child(3) { background: #28c840; }
+        .browser-url {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .browser-url i { font-size: 0.65rem; color: #28c840; }
+
+        /* Fake store content */
+        .mock-store {
+            padding: 24px;
+        }
+        .mock-store-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .mock-store-logo {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+        .mock-store-logo i { margin-right: 6px; color: var(--accent); }
+        .mock-store-nav {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+        .mock-store-nav li {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .mock-store-cart {
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .mock-store-cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            font-size: 0.55rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .mock-product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .mock-product-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all var(--transition);
+        }
+        .mock-product-card:hover {
+            border-color: var(--border-glass);
+            transform: translateY(-3px);
+        }
+        .mock-product-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .mock-product-info {
+            padding: 14px;
+        }
+        .mock-product-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .mock-product-rating {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+        .mock-product-rating i {
+            font-size: 0.6rem;
+            color: #fbbf24;
+        }
+        .mock-product-rating span {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        .mock-product-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .mock-product-price {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+        .mock-add-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            background: var(--accent-subtle);
+            color: var(--accent-light);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .mock-add-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--border-glass);
+            text-align: center;
+        }
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+        .footer-brand i {
+            color: var(--accent);
+            margin-right: 6px;
+        }
+        .footer-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .footer-text a {
+            color: var(--accent-light);
+            font-weight: 600;
+            transition: color var(--transition);
+        }
+        .footer-text a:hover { color: var(--accent); }
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            margin-top: 8px;
+        }
+        .footer-links a {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            transition: all var(--transition);
+        }
+        .footer-links a:hover {
+            color: var(--accent-light);
+            transform: translateY(-3px);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 900px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .mock-product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .mock-product-card:nth-child(5),
+            .mock-product-card:nth-child(6) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 15, 0.97);
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                padding: 24px;
+                gap: 20px;
+                border-bottom: 1px solid var(--border-glass);
+            }
+            .hero-stats {
+                gap: 24px;
+            }
+            .hero-stat-value { font-size: 1.3rem; }
+            .tech-item {
+                min-width: 110px;
+                padding: 20px 24px;
+            }
+            .mock-store-nav { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .mock-product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-actions {
+                flex-direction: column;
+            }
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    
+        /* Alternating Section Colors */
+        section:nth-of-type(even) {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+        }
+        section:nth-of-type(odd) {
+            background-color: transparent !important;
+        }
+</style>
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#" class="nav-logo">
+                <i class="fa-solid fa-bag-shopping"></i>
+                Shop<span>Ease</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#tech">Tech Stack</a></li>
+                <li><a href="#preview">Preview</a></li>
+            </ul>
+            <a href="https://github.com/Fred4377/shopease" target="_blank" rel="noopener noreferrer" class="nav-cta">
+                <i class="fa-brands fa-github"></i> GitHub
+            </a>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fa-solid fa-sparkles"></i>
+                Full-Stack E-Commerce Platform
+            </div>
+            <h1 class="hero-title">
+                Shop<span class="text-gradient">Ease</span>
+            </h1>
+            <p class="hero-tagline">Modern E-Commerce Made Simple</p>
+            <p class="hero-desc">
+                A sleek, full-stack e-commerce application featuring smart product filtering,
+                real-time shopping cart, secure JWT authentication, and a blazing-fast responsive
+                interface — built with the modern MERN stack.
+            </p>
+            <div class="hero-actions">
+                <a href="https://github.com/Fred4377/shopease" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                    <i class="fa-brands fa-github"></i> View on GitHub
+                </a>
+                <a href="#preview" class="btn-secondary">
+                    <i class="fa-solid fa-eye"></i> See Preview
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">MERN</div>
+                    <div class="hero-stat-label">Stack</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">100%</div>
+                    <div class="hero-stat-label">Responsive</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">JWT</div>
+                    <div class="hero-stat-label">Secured</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="features-header reveal">
+                <div class="section-label"><i class="fa-solid fa-cubes"></i> Core Features</div>
+                <h2 class="section-title">Everything You Need to <span class="text-gradient">Sell Online</span></h2>
+                <p class="section-subtitle">
+                    ShopEase packs every essential e-commerce feature into a clean, modern architecture — from product browsing to secure checkout.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon"><i class="fa-solid fa-grid-2"></i></div>
+                    <h3>Product Catalog</h3>
+                    <p>Browse products with smart filtering, category sorting, and instant search — designed for effortless product discovery.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <h3>Shopping Cart</h3>
+                    <p>Real-time cart updates with quantity controls, price calculation, and persistent state across sessions.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon"><i class="fa-solid fa-lock"></i></div>
+                    <h3>Secure Checkout</h3>
+                    <p>Streamlined multi-step checkout flow with form validation, order summary, and payment integration ready.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon"><i class="fa-solid fa-fingerprint"></i></div>
+                    <h3>User Authentication</h3>
+                    <p>JWT-based authentication with secure login, registration, password hashing, and protected route middleware.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    <h3>Responsive Design</h3>
+                    <p>Fully responsive from mobile to desktop with adaptive layouts, touch-friendly controls, and fluid typography.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <h3>Fast & Optimized</h3>
+                    <p>Optimized bundle sizes, lazy loading, efficient database queries, and caching for lightning-fast performance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TECH STACK ===== -->
+    <section class="tech-stack" id="tech">
+        <div class="container">
+            <div class="tech-header reveal">
+                <div class="section-label"><i class="fa-solid fa-code"></i> Tech Stack</div>
+                <h2 class="section-title">Built With <span class="text-gradient">Modern Tools</span></h2>
+                <p class="section-subtitle">
+                    Powered by the MERN stack — a battle-tested combination of technologies for building scalable, full-stack web applications.
+                </p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-item tech-react reveal reveal-delay-1">
+                    <div class="tech-item-icon"><i class="fa-brands fa-react"></i></div>
+                    <span>React</span>
+                </div>
+                <div class="tech-item tech-node reveal reveal-delay-2">
+                    <div class="tech-item-icon"><i class="fa-brands fa-node-js"></i></div>
+                    <span>Node.js</span>
+                </div>
+                <div class="tech-item tech-express reveal reveal-delay-3">
+                    <div class="tech-item-icon"><i class="fa-solid fa-server"></i></div>
+                    <span>Express</span>
+                </div>
+                <div class="tech-item tech-mongo reveal reveal-delay-4">
+                    <div class="tech-item-icon"><i class="fa-solid fa-database"></i></div>
+                    <span>MongoDB</span>
+                </div>
+                <div class="tech-item tech-js reveal reveal-delay-5">
+                    <div class="tech-item-icon"><i class="fa-brands fa-js"></i></div>
+                    <span>JavaScript</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== MOCKUP / PREVIEW ===== -->
+    <section class="mockup-section" id="preview">
+        <div class="container">
+            <div class="mockup-header reveal">
+                <div class="section-label"><i class="fa-solid fa-display"></i> Preview</div>
+                <h2 class="section-title">See It <span class="text-gradient">In Action</span></h2>
+                <p class="section-subtitle">
+                    A glimpse of the ShopEase storefront — clean product cards, intuitive navigation, and a modern shopping experience.
+                </p>
+            </div>
+
+            <div class="browser-window reveal">
+                <div class="browser-topbar">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fa-solid fa-lock"></i>
+                        shopease.example.com/products
+                    </div>
+                </div>
+                <div class="mock-store">
+                    <!-- Fake store nav -->
+                    <div class="mock-store-header">
+                        <div class="mock-store-logo">
+                            <i class="fa-solid fa-bag-shopping"></i>ShopEase
+                        </div>
+                        <ul class="mock-store-nav">
+                            <li>All Products</li>
+                            <li>Electronics</li>
+                            <li>Accessories</li>
+                            <li>Deals</li>
+                        </ul>
+                        <div class="mock-store-cart">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <div class="mock-store-cart-badge">3</div>
+                        </div>
+                    </div>
+
+                    <!-- Fake product grid -->
+                    <div class="mock-product-grid">
+                        <!-- Product 1 -->
+                        <div class="mock-product-card">
+                            <div class="mock-product-img" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);">
+                                <i class="fa-solid fa-headphones"></i>
+                            </div>
+                            <div class="mock-product-info">
+                                <div class="mock-product-name">Wireless Headphones</div>
+                                <div class="mock-product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                    <span>(128)</span>
+                                </div>
+                                <div class="mock-product-bottom">
+                                    <div class="mock-product-price">$79.99</div>
+                                    <div class="mock-add-btn"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 2 -->
+                        <div class="mock-product-card">
+                            <div class="mock-product-img" style="background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div class="mock-product-info">
+                                <div class="mock-product-name">Smart Watch</div>
+                                <div class="mock-product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <span>(256)</span>
+                                </div>
+                                <div class="mock-product-bottom">
+                                    <div class="mock-product-price">$199.99</div>
+                                    <div class="mock-add-btn"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="mock-product-card">
+                            <div class="mock-product-img" style="background: linear-gradient(135deg, #4a1d96 0%, #6d28d9 100%);">
+                                <i class="fa-solid fa-laptop"></i>
+                            </div>
+                            <div class="mock-product-info">
+                                <div class="mock-product-name">Laptop Stand</div>
+                                <div class="mock-product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-regular fa-star"></i>
+                                    <span>(89)</span>
+                                </div>
+                                <div class="mock-product-bottom">
+                                    <div class="mock-product-price">$49.99</div>
+                                    <div class="mock-add-btn"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="mock-product-card">
+                            <div class="mock-product-img" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);">
+                                <i class="fa-solid fa-keyboard"></i>
+                            </div>
+                            <div class="mock-product-info">
+                                <div class="mock-product-name">Mechanical Keyboard</div>
+                                <div class="mock-product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                    <span>(203)</span>
+                                </div>
+                                <div class="mock-product-bottom">
+                                    <div class="mock-product-price">$129.99</div>
+                                    <div class="mock-add-btn"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 5 -->
+                        <div class="mock-product-card">
+                            <div class="mock-product-img" style="background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);">
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+                            <div class="mock-product-info">
+                                <div class="mock-product-name">Webcam HD Pro</div>
+                                <div class="mock-product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-regular fa-star"></i>
+                                    <span>(67)</span>
+                                </div>
+                                <div class="mock-product-bottom">
+                                    <div class="mock-product-price">$89.99</div>
+                                    <div class="mock-add-btn"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product 6 -->
+                        <div class="mock-product-card">
+                            <div class="mock-product-img" style="background: linear-gradient(135deg, #713f12 0%, #92400e 100%);">
+                                <i class="fa-solid fa-plug"></i>
+                            </div>
+                            <div class="mock-product-info">
+                                <div class="mock-product-name">USB-C Hub</div>
+                                <div class="mock-product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <span>(341)</span>
+                                </div>
+                                <div class="mock-product-bottom">
+                                    <div class="mock-product-price">$39.99</div>
+                                    <div class="mock-add-btn"><i class="fa-solid fa-plus"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    Shop<span class="text-gradient">Ease</span>
+                </div>
+                <p class="footer-text">
+                    Built by <a href="https://github.com/Fred4377" target="_blank" rel="noopener noreferrer">Fred Otieno</a>
+                </p>
+                <div class="footer-links">
+                    <a href="https://github.com/Fred4377/shopease" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </div>
+                <p class="footer-text" style="font-size: 0.8rem; color: var(--text-muted);">
+                    &copy; 2026 ShopEase. Demo project for portfolio showcase.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-xmark');
+        });
+
+        // Close mobile menu on link click
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-xmark');
+            });
+        });
+
+        // Scroll-reveal with Intersection Observer
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.12,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
