@@ -1,0 +1,65 @@
+# ShopEase MERN Stack E-Commerce Web Application Walkthrough
+
+The ShopEase project has been successfully built! This walkthrough provides an overview of the completed application, its features, and how to run it.
+
+## Overview
+
+The application is structured into two separate projects:
+1. **`shopease-backend`**: A Node.js and Express.js API connecting to a MongoDB database.
+2. **`shopease-frontend`**: A React.js application created with Vite, providing a modern, dynamic user interface.
+
+## What Was Built
+
+### Backend Architecture
+- **Mongoose Models**: Created fully-typed models for `User`, `Product`, and `Order`.
+- **Authentication**: Implemented secure JSON Web Token (JWT) authentication and Bcrypt password hashing. Middleware restricts access to protected and admin-only routes.
+- **RESTful APIs**:
+  - `GET /api/products` (supports search, category filtering, and sorting)
+  - `POST /api/orders` (creates orders and automatically reduces stock)
+  - Full CRUD capabilities for products and orders via the admin panel.
+- **Database Seeder**: A `seeder.js` script to populate the database with sample products and an admin user.
+
+### Frontend Features
+- **Modern UI/UX**: Designed a premium aesthetic using a dark theme with vibrant blue (`#1E90FF`) accents and responsive CSS Grids/Flexbox. No external UI frameworks were used to give full control.
+- **State Management**: Built custom `AuthContext` and `CartContext` to efficiently manage global state and persist user data/carts in `localStorage`.
+- **Dynamic Routing**: Configured `react-router-dom` with a `ProtectedRoute` wrapper for user and admin sections.
+- **Pages**:
+  - **HomePage**: Features a hero section, categories, featured products, and site benefits.
+  - **ProductsPage**: Fully functional product grid with category filters, a search bar, and dynamic sorting.
+  - **Cart & Checkout Flow**: Seamless cart management, multi-step checkout with form validation, and an order success page.
+  - **Admin Dashboard**: Comprehensive dashboard with statistics, order management, and product inventory controls.
+
+## Verification Performed
+
+- The Vite frontend was successfully built using `npm run build` to verify there are no compilation errors, syntax errors, or missing imports. 
+- Due to the reliance on a local MongoDB instance, manual testing of the API endpoints requires MongoDB to be actively running on `localhost:27017`.
+
+> [!IMPORTANT]
+> **Database Initialization Error**
+> During development, the database seeder script timed out while connecting to `mongodb://localhost:27017/shopease`. This indicates that a local MongoDB server might not be running on your machine. You will need to start your local MongoDB server to fully run the application.
+
+## How to Run Locally
+
+1. **Start MongoDB**: Ensure your local MongoDB instance is running on port `27017`.
+2. **Seed the Database**:
+   ```bash
+   cd scratch/ShopEase/shopease-backend
+   node seeder.js
+   ```
+3. **Start the Backend Server**:
+   ```bash
+   npm run dev
+   ```
+   *The server will start on port 5000.*
+4. **Start the Frontend Client**:
+   Open a new terminal window:
+   ```bash
+   cd scratch/ShopEase/shopease-frontend
+   npm run dev
+   ```
+   *The client will start on `http://localhost:5173`.*
+
+> [!TIP]
+> You can login using the seeded admin account:
+> **Email**: `admin@shopease.com`
+> **Password**: `admin123`
