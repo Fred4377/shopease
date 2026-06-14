@@ -2,6 +2,9 @@
 
 Hey! I'm Fred from Nairobi. 👋 This is ShopEase, an e-commerce platform I built while trying to master the MERN stack (MongoDB, Express, React, Node.js). 
 
+## 📸 Preview
+![ShopEase Screenshot](screenshots/preview.png)
+
 ## Why I built this
 I needed a project to figure out how cart state, user authentication (JWTs), and checkout flows actually work under the hood. Honestly, the hardest part was getting the global state working smoothly and making sure the cart doesn't lose items when you refresh the page.
 
