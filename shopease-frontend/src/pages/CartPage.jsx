@@ -35,7 +35,7 @@ const CartPage = () => {
                   <Link to={`/product/${item.product}`}>
                     <h3>{item.name}</h3>
                   </Link>
-                  <div className="cart-item-price">${item.price.toFixed(2)}</div>
+                  <div className="cart-item-price">KSh {(item.price * 100).toLocaleString()}</div>
                 </div>
 
                 <div className="cart-item-qty">
@@ -53,7 +53,7 @@ const CartPage = () => {
                 </div>
 
                 <div className="cart-item-subtotal">
-                  ${(item.price * item.qty).toFixed(2)}
+                  KSh {(item.price * item.qty * 100).toLocaleString()}
                 </div>
 
                 <button 
@@ -75,7 +75,7 @@ const CartPage = () => {
             
             <div className="summary-row">
               <span>Items ({cartItems.reduce((acc, item) => acc + item.qty, 0)}):</span>
-              <span>${itemsPrice.toFixed(2)}</span>
+              <span>KSh {(itemsPrice * 100).toLocaleString()}</span>
             </div>
             
             <div className="summary-row">
@@ -84,20 +84,20 @@ const CartPage = () => {
                 {shippingPrice === 0 ? (
                   <span className="text-success">Free</span>
                 ) : (
-                  `$${shippingPrice.toFixed(2)}`
+                  `KSh ${(shippingPrice * 100).toLocaleString()}`
                 )}
               </span>
             </div>
             
             {shippingPrice > 0 && (
               <div className="shipping-notice mb-3 text-secondary" style={{fontSize: '0.85rem'}}>
-                Free shipping on orders over $50!
+                Free shipping on orders over KSh 5,000!
               </div>
             )}
             
             <div className="summary-row total-row">
               <span>Total:</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>KSh {(totalPrice * 100).toLocaleString()}</span>
             </div>
             
             <button 

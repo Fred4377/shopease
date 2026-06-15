@@ -62,8 +62,9 @@ const ProductDetailPage = () => {
           </div>
           
           <div className="product-price-large mb-3">
-            ${product.price?.toFixed(2)}
+            KSh {(product.price * 100).toLocaleString()}
           </div>
+
           
           <div className={`stock-status mb-3 ${product.stock > 0 ? 'text-success' : 'text-danger'}`}>
             {product.stock > 0 ? `In Stock (${product.stock} available)` : 'Out of Stock'}

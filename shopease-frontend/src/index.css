@@ -1,25 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 :root {
-  /* Personally picked colors - decided to go with a deep teal vibe */
-  --primary-teal: #0d9488;
-  --primary-teal-hover: #0f766e;
-  --accent-amber: #f59e0b;
+  /* Forest Green & Warm Cream Palette */
+  --primary-teal: #1b4332;
+  --primary-teal-hover: #143225;
+  --primary-blue: #1b4332; /* Aliased for navbar compatibility */
+  --accent-amber: #52b788;
   
-  --dark-bg: #0f172a;
-  --card-bg: #1e293b;
+  --dark-bg: #fdfbf7;
+  --card-bg: #ffffff;
   
-  --success-green: #22c55e;
+  --success-green: #2ecc71;
   --danger-red: #ef4444;
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --text-primary: #1b2621;
+  --text-secondary: #475a51;
   
-  --border-color: #334155;
+  --border-color: #eae6df;
   
-  /* I like mixing rem and px sometimes */
-  --border-rad-sm: 6px;
-  --border-rad-md: 8px;
+  --border-rad-sm: 8px;
+  --border-rad-md: 12px;
 }
 
 * {
@@ -33,7 +33,6 @@ body {
   background-color: var(--dark-bg);
   color: var(--text-primary);
   line-height: 1.65;
-  /* subtle custom scrollbar */
 }
 
 /* Custom Scrollbar */
@@ -44,7 +43,7 @@ body {
   background: var(--dark-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #eae6df;
   border-radius: 5px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -68,16 +67,16 @@ ul {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 22px; /* slightly offset from standard 20px */
+  padding: 0 22px;
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-weight: 700;
   margin-bottom: 1.1rem;
-  color: #ffffff;
-  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 h1 { font-size: 2.6rem; }
@@ -87,7 +86,7 @@ h3 { font-size: 1.4rem; }
 /* Buttons */
 .btn {
   display: inline-block;
-  padding: 11px 22px; /* 11px feels better than 10px */
+  padding: 11px 22px;
   border-radius: var(--border-rad-sm);
   font-weight: 600;
   font-family: 'Inter', sans-serif;
@@ -98,25 +97,25 @@ h3 { font-size: 1.4rem; }
 }
 
 .btn:active {
-  transform: scale(0.97); /* Micro-interaction! */
+  transform: scale(0.97);
 }
 
 .btn-primary {
   background-color: var(--primary-teal);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);
+  box-shadow: 0 4px 14px rgba(27, 67, 50, 0.15);
 }
 
 .btn-primary:hover {
   background-color: var(--primary-teal-hover);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+  box-shadow: 0 6px 20px rgba(27, 67, 50, 0.25);
 }
 
 /* Just directly using hex here, was testing out colors */
-.btn-success { background-color: #22c55e; color: white; }
-.btn-success:hover { background-color: #16a34a; }
+.btn-success { background-color: #2ecc71; color: white; }
+.btn-success:hover { background-color: #27ae60; }
 
 .btn-danger { background-color: #ef4444; color: white; }
 .btn-danger:hover { background-color: #dc2626; }
@@ -151,10 +150,10 @@ h3 { font-size: 1.4rem; }
 
 .form-control {
   width: 100%;
-  padding: 13px; /* 13px instead of 12px gives it breathing room */
+  padding: 13px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-rad-sm);
-  background-color: #1e293b; /* manual hex */
+  background-color: #ffffff;
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -163,23 +162,24 @@ h3 { font-size: 1.4rem; }
 .form-control:focus {
   outline: none;
   border-color: var(--primary-teal);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); /* input glow */
+  box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.08);
 }
 
 /* Cards */
 .card {
   background-color: var(--card-bg);
   border-radius: var(--border-rad-md);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
   overflow: hidden;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 14px rgba(27, 67, 50, 0.04);
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 24px rgba(27, 67, 50, 0.08);
 }
+
 
 /* My custom hand-coded spinner */
 .spinner {

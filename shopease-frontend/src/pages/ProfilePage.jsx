@@ -81,7 +81,8 @@ const ProfilePage = () => {
                       <tr key={order._id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                         <td className="py-3" style={{ fontSize: '0.9rem' }}>{order._id}</td>
                         <td className="py-3">{order.createdAt.substring(0, 10)}</td>
-                        <td className="py-3">${order.totalPrice.toFixed(2)}</td>
+                        <td className="py-3">KSh {order.totalPrice.toLocaleString()}</td>
+
                         <td className="py-3">
                           {order.isPaid ? (
                             <span className="text-success">Yes</span>

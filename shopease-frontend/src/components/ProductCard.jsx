@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
         </div>
         
         <div className="product-price-row">
-          <div className="product-price">${product.price.toFixed(2)}</div>
+          <div className="product-price">KSh {product.price.toLocaleString()}</div>
         </div>
 
         <div className="product-actions">
