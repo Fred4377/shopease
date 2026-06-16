@@ -17,30 +17,30 @@
     <style>
         /* ===== CSS Custom Properties ===== */
         :root {
-            --bg-primary: #fdfbf7;
-            --bg-secondary: #f4f1ea;
-            --bg-tertiary: #eae6df;
-            --bg-card: #ffffff;
-            --bg-glass: rgba(27, 67, 50, 0.04);
-            --border-glass: rgba(27, 67, 50, 0.12);
-            --accent: #1b4332;
-            --accent-light: #2d6a4f;
-            --accent-glow: rgba(45, 106, 79, 0.2);
-            --accent-subtle: rgba(82, 183, 136, 0.15);
-            --text-primary: #1b2621;
-            --text-secondary: #475a51;
-            --text-muted: #748c81;
-            --gradient-accent: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
-            --gradient-bg: linear-gradient(180deg, #fdfbf7 0%, #f4f1ea 50%, #fdfbf7 100%);
-            --shadow-glow: 0 10px 30px rgba(27, 67, 50, 0.08);
-            --shadow-card: 0 8px 24px rgba(27, 67, 50, 0.06);
+            --bg-primary: #FAF7F2;
+            --bg-secondary: #F3ECE2;
+            --bg-tertiary: #E8DFD3;
+            --bg-card: #FFFFFF;
+            --bg-glass: rgba(30, 63, 32, 0.04);
+            --border-glass: rgba(30, 63, 32, 0.12);
+            --accent: #1E3F20;
+            --accent-light: #2B532E;
+            --accent-glow: rgba(30, 63, 32, 0.2);
+            --accent-subtle: rgba(30, 63, 32, 0.1);
+            --text-primary: #1E2822;
+            --text-secondary: #4A584E;
+            --text-muted: #7A8B80;
+            --gradient-accent: linear-gradient(135deg, #1E3F20 0%, #2B532E 50%, #3C6E41 100%);
+            --gradient-bg: linear-gradient(180deg, #FAF7F2 0%, #F3ECE2 50%, #FAF7F2 100%);
+            --shadow-glow: 0 10px 30px rgba(30, 63, 32, 0.08);
+            --shadow-card: 0 8px 24px rgba(30, 63, 32, 0.06);
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 18px;
             --radius-xl: 22px;
             --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-display: 'Playfair Display', Georgia, serif;
-            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ===== Reset & Base ===== */
@@ -1035,97 +1035,219 @@
         .w-full { width: 100%; }
         .hidden { display: none !important; }
 
-        /* Sim M-Pesa Phone Screen overlay */
+        /* Custom shipping dropdown and gold overrides */
+        #shippingArea {
+            border: 2px solid var(--accent) !important;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        #shippingArea:focus {
+            box-shadow: 0 0 0 3px var(--accent-glow) !important;
+        }
+        .section-label, .hero-badge {
+            border: 1px solid #D4AF37 !important;
+            color: #D4AF37 !important;
+            background: rgba(212, 175, 55, 0.08) !important;
+        }
+        .mock-product-rating i {
+            font-size: 0.6rem;
+            color: #D4AF37 !important;
+        }
+
+        /* Sim M-Pesa Phone Screen overlay (STK Push Slide-in) */
         .prompt-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(30, 63, 32, 0.45);
+            backdrop-filter: blur(8px);
             z-index: 3000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .prompt-overlay.active {
             opacity: 1;
             pointer-events: all;
         }
         .phone-prompt-box {
-            background: #e5e7eb;
-            border: 4px solid #1f2937;
-            border-radius: 12px;
-            width: 280px;
+            background: #111;
+            border: 12px solid #222;
+            border-radius: 36px;
+            width: 310px;
+            height: 550px;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.1);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #000;
+            color: #fff;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100vh) scale(0.9);
+            transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.45s ease;
         }
-        .sim-header {
-            background: #1e3a8a;
+        .prompt-overlay.active .phone-prompt-box {
+            transform: translateY(0) scale(1);
+        }
+        .phone-notch {
+            width: 110px;
+            height: 18px;
+            background: #222;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 20;
+        }
+        .phone-status-bar {
+            padding: 4px 20px;
+            height: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            color: #fff;
+            z-index: 10;
+            background: transparent;
+            margin-top: 4px;
+        }
+        .phone-status-icons {
+            display: flex;
+            gap: 5px;
+        }
+        .phone-screen {
+            flex: 1;
+            background: linear-gradient(135deg, #152d17 0%, #0c150d 100%);
+            padding: 24px 16px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .stk-dialog {
+            background: #f3f4f6;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            margin-top: 10px;
+        }
+        .stk-header {
+            background: #1E3F20;
             color: #fff;
             text-align: center;
-            padding: 10px;
+            padding: 8px;
             font-weight: 800;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 1px;
         }
-        .sim-body {
-            padding: 16px;
-            background: #f3f4f6;
-            font-size: 0.88rem;
-        }
-        .sim-body p {
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-        .sim-input-group {
-            margin-top: 12px;
-        }
-        .sim-input-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #4b5563;
-            margin-bottom: 4px;
-        }
-        .sim-input {
-            width: 100%;
-            padding: 8px;
-            font-size: 1.1rem;
+        .stk-body {
+            padding: 16px 12px;
+            color: #111;
             text-align: center;
-            letter-spacing: 8px;
-            border: 1px solid #9ca3af;
-            border-radius: 4px;
-            background: #fff;
-            color: #000;
         }
-        .sim-input:focus {
-            outline: none;
-            border-color: #1e3a8a;
+        .stk-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            font-weight: 500;
         }
-        .sim-footer {
+        .stk-pin-wrapper {
             display: flex;
-            border-top: 1px solid #d1d5db;
+            justify-content: center;
+            gap: 12px;
+            margin: 12px 0 6px;
         }
-        .sim-footer button {
+        .stk-pin-dot {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #666;
+            border-radius: 50%;
+            transition: all 0.15s ease-out;
+        }
+        .stk-pin-dot.filled {
+            background: #1E3F20;
+            border-color: #1E3F20;
+            transform: scale(1.15);
+        }
+        .stk-status {
+            font-size: 0.72rem;
+            color: #d32f2f;
+            min-height: 16px;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+        .stk-footer {
+            display: flex;
+            border-top: 1px solid #e5e7eb;
+        }
+        .stk-footer button {
             flex: 1;
             padding: 12px;
-            background: #f9fafb;
+            background: transparent;
             border: none;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: background 0.2s;
-            color: #1e3a8a;
+            color: #1E3F20;
         }
-        .sim-footer button:hover {
-            background: #e5e7eb;
+        .stk-footer button:hover {
+            background: rgba(30, 63, 32, 0.05);
         }
-        .sim-footer button:first-child {
-            border-right: 1px solid #d1d5db;
+        .stk-footer button#btnCancelPrompt {
+            border-right: 1px solid #e5e7eb;
             color: #ef4444;
+        }
+        .phone-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+            justify-items: center;
+        }
+        .key-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, background-color 0.15s;
+        }
+        .key-btn:active {
+            transform: scale(0.9);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .key-btn.key-action {
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #ffb74d;
+        }
+        .key-btn.key-action[data-val="cancel"] {
+            color: #ef5350;
+        }
+        .phone-home-indicator {
+            width: 100px;
+            height: 4px;
+            background: #555;
+            border-radius: 2px;
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 </style>
 </head>
@@ -1487,10 +1609,10 @@
                     <div class="form-group">
                         <label for="shippingArea">Select Nairobi Delivery Zone</label>
                         <select id="shippingArea" class="form-input">
-                            <option value="250" selected>Westlands / Parklands (KSh 250)</option>
-                            <option value="200">Nairobi CBD (KSh 200)</option>
+                            <option value="200" selected>Nairobi CBD (KSh 200)</option>
+                            <option value="250">Westlands / Parklands (KSh 250)</option>
+                            <option value="300">Upperhill / Community (KSh 300)</option>
                             <option value="300">Kilimani / Hurlingham (KSh 300)</option>
-                            <option value="150">Kasarani / Roysambu (KSh 150)</option>
                             <option value="400">Karen / Langata (KSh 400)</option>
                         </select>
                     </div>
@@ -1538,19 +1660,53 @@
     <!-- M-Pesa Phone Mock Prompt Window (Simulation) -->
     <div id="mpesaPromptModal" class="prompt-overlay">
         <div class="phone-prompt-box">
-            <div class="sim-header">LIPA NA M-PESA</div>
-            <div class="sim-body">
-                <p>Do you want to pay <strong>KSh <span id="promptPrice">39,550</span></strong> to <strong>ShopEase Store</strong>?</p>
-                <div class="sim-input-group">
-                    <label>Enter M-Pesa PIN:</label>
-                    <input type="password" id="mpesaPin" maxlength="4" class="sim-input" placeholder="••••">
+            <div class="phone-notch"></div>
+            <div class="phone-status-bar">
+                <span class="phone-time" id="phoneTime">13:45</span>
+                <div class="phone-status-icons">
+                    <i class="fa-solid fa-signal"></i>
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-battery-three-quarters"></i>
                 </div>
-                <div id="mpesaStatusMsg" style="margin-top: 10px; font-size: 0.75rem; text-align: center; color: #1e3a8a; font-weight: 600; min-height: 15px;"></div>
             </div>
-            <div class="sim-footer">
-                <button id="btnCancelPrompt">Cancel</button>
-                <button id="btnSendPrompt">Send</button>
+            
+            <div class="phone-screen">
+                <!-- M-Pesa STK Dialog -->
+                <div class="stk-dialog" id="stkDialog">
+                    <div class="stk-header">M-PESA</div>
+                    <div class="stk-body">
+                        <p class="stk-text">Do you want to pay KSh <span id="promptPrice">39,550</span> to ShopEase Store?</p>
+                        <div class="stk-pin-wrapper">
+                            <span class="stk-pin-dot"></span>
+                            <span class="stk-pin-dot"></span>
+                            <span class="stk-pin-dot"></span>
+                            <span class="stk-pin-dot"></span>
+                        </div>
+                        <div id="mpesaStatusMsg" class="stk-status"></div>
+                    </div>
+                    <div class="stk-footer">
+                        <button id="btnCancelPrompt">Cancel</button>
+                        <button id="btnSendPrompt">Send</button>
+                    </div>
+                </div>
+
+                <!-- Keypad -->
+                <div class="phone-keypad">
+                    <button class="key-btn" data-val="1">1</button>
+                    <button class="key-btn" data-val="2">2</button>
+                    <button class="key-btn" data-val="3">3</button>
+                    <button class="key-btn" data-val="4">4</button>
+                    <button class="key-btn" data-val="5">5</button>
+                    <button class="key-btn" data-val="6">6</button>
+                    <button class="key-btn" data-val="7">7</button>
+                    <button class="key-btn" data-val="8">8</button>
+                    <button class="key-btn" data-val="9">9</button>
+                    <button class="key-btn key-action" data-val="cancel">Cancel</button>
+                    <button class="key-btn" data-val="0">0</button>
+                    <button class="key-btn key-action" data-val="clear">Clear</button>
+                </div>
             </div>
+            <div class="phone-home-indicator"></div>
         </div>
     </div>
 
@@ -1776,6 +1932,55 @@
             mpesaForm.classList.add('hidden');
         });
 
+        // Update Phone Time
+        const phoneTime = document.getElementById('phoneTime');
+        if (phoneTime) {
+            const updateTime = () => {
+                const now = new Date();
+                phoneTime.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            };
+            updateTime();
+            setInterval(updateTime, 60000);
+        }
+
+        // M-Pesa Simulated Keypad State
+        let currentPin = '';
+        const pinDots = document.querySelectorAll('.stk-pin-dot');
+
+        function updatePinDots() {
+            pinDots.forEach((dot, index) => {
+                if (index < currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+        }
+
+        // Handle numeric keypad clicks
+        document.querySelectorAll('.key-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const val = btn.getAttribute('data-val');
+                mpesaStatusMsg.textContent = '';
+                
+                if (val === 'cancel') {
+                    mpesaPromptModal.classList.remove('active');
+                    currentPin = '';
+                    updatePinDots();
+                } else if (val === 'clear') {
+                    if (currentPin.length > 0) {
+                        currentPin = currentPin.slice(0, -1);
+                        updatePinDots();
+                    }
+                } else if (!isNaN(val)) {
+                    if (currentPin.length < 4) {
+                        currentPin += val;
+                        updatePinDots();
+                    }
+                }
+            });
+        });
+
         // Pay now M-Pesa STK Push Simulation
         btnPayNow.addEventListener('click', () => {
             const phone = document.getElementById('mpesaPhone').value.trim();
@@ -1794,8 +1999,8 @@
                 
                 // Show simulated phone prompt
                 mpesaPromptModal.classList.add('active');
-                mpesaPin.value = '';
-                mpesaPin.focus();
+                currentPin = '';
+                updatePinDots();
                 mpesaStatusMsg.textContent = '';
             }, 1200);
         });
@@ -1803,19 +2008,20 @@
         // Cancel phone prompt
         btnCancelPrompt.addEventListener('click', () => {
             mpesaPromptModal.classList.remove('active');
+            currentPin = '';
+            updatePinDots();
         });
 
         // Send phone PIN prompt
         btnSendPrompt.addEventListener('click', () => {
-            const pin = mpesaPin.value.trim();
-            if (pin.length !== 4) {
-                mpesaStatusMsg.style.color = '#ef4444';
+            if (currentPin.length !== 4) {
+                mpesaStatusMsg.style.color = '#d32f2f';
                 mpesaStatusMsg.textContent = 'Invalid PIN! Please enter a 4-digit PIN.';
                 return;
             }
             
-            mpesaStatusMsg.style.color = '#1e3a8a';
-            mpesaStatusMsg.textContent = 'Processing transaction...';
+            mpesaStatusMsg.style.color = '#1E3F20';
+            mpesaStatusMsg.textContent = 'Sending PIN...';
             btnSendPrompt.disabled = true;
             btnCancelPrompt.disabled = true;
             
