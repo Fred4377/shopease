@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://shopease-api-skey.onrender.com/api',
+  baseURL: 'https://shopease-api-otyi.onrender.com/api',
 });
 
 api.interceptors.request.use((config) => {
