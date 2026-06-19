@@ -62,6 +62,12 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    mpesaCheckoutRequestID: {
+      type: String,
+    },
+    mpesaReceiptNumber: {
+      type: String,
+    },
   },
   {
     timestamps: true,

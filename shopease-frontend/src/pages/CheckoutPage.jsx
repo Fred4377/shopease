@@ -31,13 +31,10 @@ const CheckoutPage = () => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
   };
 
-  const placeOrderHandler = async (e) => {
-    if (e) e.preventDefault();
+  const placeOrderHandler = async () => {
     setLoading(true);
     setError(null);
 
-    // Safaricom Daraja API sandbox is extremely flaky and throws random 504 Gateway Timeouts in Nairobi.
-    // We mock the STK Push prompt response logic to guarantee smooth UX during demo evaluation.
     try {
       const { data } = await api.post('/orders', {
         orderItems: cartItems,
@@ -48,48 +45,81 @@ const CheckoutPage = () => {
         totalPrice: totalPrice * 100,
       });
 
-      clearCart();
-      navigate(`/order-success/${data._id}`);
+      if (paymentMethod === 'Cash on Delivery') {
+        clearCart();
+        navigate(`/order-success/${data._id}`);
+      }
+      return data;
     } catch (err) {
       setError(err.response?.data?.message || err.message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const submitOrderFormHandler = (e) => {
+  const submitOrderFormHandler = async (e) => {
     e.preventDefault();
+    setError(null);
     
     if (paymentMethod === 'Lipa na M-Pesa') {
       if (!mpesaPhone) {
         setError("Please enter a valid M-Pesa phone number.");
         return;
       }
-      // Open the interactive M-Pesa STK simulation modal
-      setShowStkModal(true);
-      setStkStatus('pending');
+      setLoading(true);
+      try {
+        // 1. Place order with isPaid = false
+        const orderData = await placeOrderHandler();
+        
+        // 2. Trigger STK push
+        setStkStatus('processing');
+        setShowStkModal(true);
+        
+        await api.post('/payment/stkpush', {
+          orderId: orderData._id,
+          phoneNumber: mpesaPhone
+        });
+        
+        // 3. Start polling for status
+        let pollCount = 0;
+        const maxPoll = 24; // 24 * 2.5s = 60 seconds
+        const pollInterval = setInterval(async () => {
+          pollCount++;
+          try {
+            const { data: statusRes } = await api.get(`/payment/status/${orderData._id}`);
+            if (statusRes.isPaid) {
+              clearInterval(pollInterval);
+              setStkStatus('success');
+              clearCart();
+              setTimeout(() => {
+                setShowStkModal(false);
+                navigate(`/order-success/${orderData._id}`);
+              }, 2000);
+            }
+          } catch (err) {
+            console.error('Polling error:', err);
+          }
+          
+          if (pollCount >= maxPoll) {
+            clearInterval(pollInterval);
+            setStkStatus('failed');
+            setError("STK push transaction timed out. Please check your phone or try again.");
+            setTimeout(() => {
+              setShowStkModal(false);
+            }, 3000);
+          }
+        }, 2500);
+        
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+        setShowStkModal(false);
+      } finally {
+        setLoading(false);
+      }
     } else {
       placeOrderHandler();
     }
-  };
-
-  const handleStkPinSubmit = () => {
-    if (stkPin.length !== 4) {
-      alert("Please enter a 4-digit M-Pesa PIN.");
-      return;
-    }
-
-    setStkStatus('processing');
-    
-    // Simulate transaction callback processing
-    setTimeout(() => {
-      setStkStatus('success');
-      setTimeout(() => {
-        setShowStkModal(false);
-        setStkPin('');
-        placeOrderHandler(); // Submit order to backend database
-      }, 1000);
-    }, 1500);
   };
 
   if (cartItems.length === 0) {
@@ -273,56 +303,27 @@ const CheckoutPage = () => {
                 <p className="text-xs text-gray-400">ShopEase Checkout System</p>
               </div>
 
-              {stkStatus === 'pending' && (
-                <>
-                  <div className="p-3 bg-neutral-900 rounded-xl w-full">
-                    <p className="text-[10px] text-emerald-500 uppercase tracking-wider font-bold">Amount to Pay</p>
-                    <p className="text-lg font-bold text-white font-mono mt-0.5">KSh {(totalPrice * 100).toLocaleString()}.00</p>
-                  </div>
-
-                  <div className="w-full space-y-3">
-                    <p className="text-[10px] text-amber-500 leading-relaxed font-semibold">
-                      Enter PIN on Safaricom line +254{mpesaPhone.slice(-9)}
-                    </p>
-                    <input 
-                      type="password" 
-                      placeholder="••••"
-                      maxLength={4}
-                      value={stkPin}
-                      onChange={(e) => setStkPin(e.target.value)}
-                      className="w-20 bg-neutral-900 text-center text-white py-1.5 rounded-lg text-lg tracking-widest focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
-                    />
-                  </div>
-
-                  <div className="flex gap-3 w-full pt-2">
-                    <button 
-                      onClick={() => setShowStkModal(false)}
-                      className="flex-1 bg-neutral-800 text-white font-bold py-2 rounded-xl text-xs hover:bg-neutral-700"
-                    >
-                      Cancel
-                    </button>
-                    <button 
-                      onClick={handleStkPinSubmit}
-                      className="flex-1 bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs hover:bg-emerald-500"
-                    >
-                      Pay Now
-                    </button>
-                  </div>
-                </>
-              )}
-
               {stkStatus === 'processing' && (
-                <div className="py-6 space-y-3">
-                  <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full"></div>
-                  <p className="text-xs text-gray-300">Processing Daraja API request...</p>
+                <div className="py-6 space-y-4 w-full flex flex-col items-center">
+                  <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-xs text-gray-300">STK push sent to +254{mpesaPhone.slice(-9)}</p>
+                  <p className="text-[10px] text-gray-400 font-semibold leading-relaxed">Please enter your M-Pesa PIN on your phone to complete the transaction.</p>
                 </div>
               )}
 
               {stkStatus === 'success' && (
                 <div className="py-6 space-y-3 flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl">✓</div>
+                  <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xl font-bold">✓</div>
                   <p className="text-xs text-emerald-400 font-bold">Payment Successful!</p>
                   <p className="text-[10px] text-gray-400">Placing your order...</p>
+                </div>
+              )}
+
+              {stkStatus === 'failed' && (
+                <div className="py-6 space-y-3 flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center text-white text-xl font-bold">✗</div>
+                  <p className="text-xs text-red-400 font-bold">Payment Failed</p>
+                  <p className="text-[10px] text-gray-400">Request timed out or declined.</p>
                 </div>
               )}
             </div>
