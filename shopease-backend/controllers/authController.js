@@ -83,4 +83,60 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-export { registerUser, authUser, getUserProfile };
+// @desc    Auth user with Google credential
+// @route   POST /api/auth/google
+// @access  Public
+const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({ message: 'Token is required' });
+    }
+
+    let email, name;
+
+    // Check for sandbox mock token
+    if (idToken === 'mock-google-token-123') {
+      email = 'google-test@shopease.com';
+      name = 'Google Test User';
+    } else {
+      // Validate token with Google API
+      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+      
+      if (!response.ok) {
+        return res.status(401).json({ message: 'Invalid Google token' });
+      }
+
+      const payload = await response.json();
+      email = payload.email;
+      name = payload.name;
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if not exists
+      // Generate a random password since it's required by the model schema
+      const randomPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      user = await User.create({
+        name,
+        email,
+        password: randomPassword,
+      });
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { registerUser, authUser, getUserProfile, googleLogin };
